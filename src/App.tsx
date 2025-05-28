@@ -1,6 +1,4 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
 import Tetris from './pages/tetris'
 
@@ -13,28 +11,68 @@ function App() {
         return <Tetris onBackToHome={() => setCurrentPage('home')} />
       default:
         return (
-          <>
-            <div>
-              <a href="https://vite.dev" target="_blank">
-                <img src={viteLogo} className="logo" alt="Vite logo" />
-              </a>
-              <a href="https://react.dev" target="_blank">
-                <img src={reactLogo} className="logo react" alt="React logo" />
-              </a>
-            </div>
-            <h1>Game Studio</h1>
-            <div className="card">
-              <button onClick={() => setCurrentPage('tetris')} className="game-button">
-                Play Tetris
-              </button>
-              <p>
-                Click the button above to play Tetris!
-              </p>
-            </div>
-            <p className="read-the-docs">
-              Click on the Vite and React logos to learn more
-            </p>
-          </>
+          <div className="home-content">
+            <header className="header">
+              <div className="logo">
+                <span className="logo-text">Studio</span>
+                <div className="logo-accent"></div>
+              </div>
+              <nav className="nav">
+                <span className="nav-item active">Games</span>
+                <span className="nav-item">About</span>
+                <span className="nav-item">Contact</span>
+              </nav>
+            </header>
+            
+            <main className="main-content">
+              <div className="hero-section">
+                <h1 className="hero-title">Welcome to Game Studio</h1>
+                <p className="hero-subtitle">Discover amazing games and experiences</p>
+              </div>
+              
+              <div className="games-catalog">
+                <h2 className="catalog-title">Featured Games</h2>
+                <div className="games-grid">
+                  <div className="game-card tetris-card" onClick={() => setCurrentPage('tetris')}>
+                    <div className="game-icon">🎮</div>
+                    <h3 className="game-title">Tetris</h3>
+                    <p className="game-description">Classic puzzle game with modern twist</p>
+                    <div className="game-tags">
+                      <span className="tag">Puzzle</span>
+                      <span className="tag">Classic</span>
+                    </div>
+                    <button className="play-button">Play Now</button>
+                  </div>
+                  
+                  <div className="game-card coming-soon">
+                    <div className="game-icon">🚀</div>
+                    <h3 className="game-title">Space Adventure</h3>
+                    <p className="game-description">Epic space exploration game</p>
+                    <div className="game-tags">
+                      <span className="tag">Adventure</span>
+                      <span className="tag">Sci-Fi</span>
+                    </div>
+                    <button className="play-button disabled">Coming Soon</button>
+                  </div>
+                  
+                  <div className="game-card coming-soon">
+                    <div className="game-icon">⚔️</div>
+                    <h3 className="game-title">Battle Arena</h3>
+                    <p className="game-description">Multiplayer battle royale</p>
+                    <div className="game-tags">
+                      <span className="tag">Action</span>
+                      <span className="tag">Multiplayer</span>
+                    </div>
+                    <button className="play-button disabled">Coming Soon</button>
+                  </div>
+                </div>
+              </div>
+            </main>
+            
+            <footer className="footer">
+              <p>Powered by React & Vite ⚡</p>
+            </footer>
+          </div>
         )
     }
   }

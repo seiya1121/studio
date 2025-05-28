@@ -226,6 +226,7 @@ const Tetris: React.FC<TetrisProps> = ({ onBackToHome }) => {
   
   // Lock Delay関連の状態
   const [isLocked, setIsLocked] = useState(false);
+  const [shouldForceLock, setShouldForceLock] = useState(false);
   const lockDelayTime = 500; // 500ms の猶予時間
   
   const gameLoopRef = useRef<number | null>(null);
@@ -239,75 +240,17 @@ const Tetris: React.FC<TetrisProps> = ({ onBackToHome }) => {
       lockDelayRef.current = null;
     }
     setIsLocked(false);
+    setShouldForceLock(false);
   }, []);
-
-  // ピースを強制的に固定する関数
-  const forceLockPiece = useCallback(() => {
-    if (!currentPiece || gameOver || isPaused) return;
-    
-    clearLockDelay();
-    const newBoard = placePiece(board, currentPiece);
-    const { newBoard: clearedBoard, linesCleared, clearedLineIndices } = clearLines(newBoard);
-    
-    // ラインクリアエフェクト
-    if (linesCleared > 0) {
-      setLinesClearingEffect(clearedLineIndices);
-      if (linesCleared === 4) {
-        setTetrisEffect(true);
-      }
-      
-      // エフェクトを一定時間後にクリア
-      setTimeout(() => {
-        setLinesClearingEffect([]);
-        setTetrisEffect(false);
-      }, 800);
-    }
-    
-    setBoard(clearedBoard);
-    setLines(prev => prev + linesCleared);
-    setScore(prev => prev + linesCleared * 100 * level);
-    
-    // レベルアップチェック
-    const newLines = lines + linesCleared;
-    const newLevel = Math.floor(newLines / 10) + 1;
-    if (newLevel > level) {
-      setLevel(newLevel);
-      setDropTime(Math.max(50, INITIAL_DROP_TIME - (newLevel - 1) * 100));
-    }
-
-    // 新しいピース生成
-    if (nextPieces.length > 0) {
-      const newCurrentPiece = { 
-        ...nextPieces[0], 
-        position: { x: Math.floor(BOARD_WIDTH / 2) - Math.floor(nextPieces[0].shape[0].length / 2), y: 0 }
-      };
-      if (!isValidMove(clearedBoard, newCurrentPiece, newCurrentPiece.position)) {
-        setGameOver(true);
-        return false;
-      }
-      setCurrentPiece(newCurrentPiece);
-      
-      // 次のピースリストを更新
-      const tetrominoType = bagGeneratorRef.current.getNext();
-      const tetromino = TETROMINOS[tetrominoType];
-      const newPiece = {
-        shape: tetromino.shape,
-        color: tetromino.color,
-        position: { x: Math.floor(BOARD_WIDTH / 2) - Math.floor(tetromino.shape[0].length / 2), y: 0 },
-      };
-      const newNextPieces = [...nextPieces.slice(1), newPiece];
-      setNextPieces(newNextPieces);
-    }
-  }, [currentPiece, board, gameOver, isPaused, level, lines, nextPieces, clearLockDelay]);
 
   // Lock Delayタイマーを開始
   const startLockDelay = useCallback(() => {
     clearLockDelay();
     setIsLocked(true);
     lockDelayRef.current = window.setTimeout(() => {
-      forceLockPiece();
+      setShouldForceLock(true);
     }, lockDelayTime);
-  }, [clearLockDelay, forceLockPiece]);
+  }, [clearLockDelay]);
 
   // ピースが接地しているかチェック
   const isGrounded = useCallback((piece: Piece, board: Board): boolean => {
@@ -595,7 +538,13 @@ const Tetris: React.FC<TetrisProps> = ({ onBackToHome }) => {
   useEffect(() => {
     if (!gameOver && !isPaused && currentPiece) {
       gameLoopRef.current = window.setInterval(() => {
-        movePiece('down');
+        if (shouldForceLock) {
+          // Lock Delayタイマーが切れた場合、強制的に固定
+          setShouldForceLock(false);
+          movePiece('down');
+        } else {
+          movePiece('down');
+        }
       }, dropTime);
     } else {
       if (gameLoopRef.current) {
@@ -609,7 +558,7 @@ const Tetris: React.FC<TetrisProps> = ({ onBackToHome }) => {
         clearInterval(gameLoopRef.current);
       }
     };
-  }, [gameOver, isPaused, currentPiece, dropTime, movePiece]);
+  }, [gameOver, isPaused, currentPiece, dropTime, movePiece, shouldForceLock]);
 
   // 初期化
   useEffect(() => {
