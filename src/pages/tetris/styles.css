@@ -1,0 +1,692 @@
+/* サイバーパンク風テトリスゲームスタイル */
+
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  height: 100%;
+  width: 100%;
+}
+
+.tetris-game {
+  width: 100vw;
+  height: 100vh;
+  background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
+  display: flex;
+  flex-direction: column;
+  font-family: 'Orbitron', monospace;
+  color: #00ffff;
+  overflow: hidden;
+  position: relative;
+}
+
+.tetris-game::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(circle at 20% 80%, rgba(0, 255, 255, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(255, 0, 255, 0.1) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.game-container {
+  display: flex;
+  gap: 2rem;
+  border-radius: 10px;
+  padding: 2rem;
+  backdrop-filter: blur(10px);
+  position: relative;
+  z-index: 1;
+  align-items: flex-start;
+  margin-top: 80px;
+  justify-content: center;
+  flex: 1;
+}
+
+/* 左側のゲーム情報 */
+.game-info-left {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  min-width: 200px;
+}
+
+/* 右側のNEXT情報 */
+.game-info-right {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  min-width: 200px;
+}
+
+.info-panel {
+  background: linear-gradient(145deg, rgba(0, 20, 40, 0.8), rgba(0, 40, 80, 0.6));
+  border: 1px solid rgba(0, 255, 255, 0.3);
+  border-radius: 8px;
+  padding: 1.4rem;
+}
+
+.info-panel h3 {
+  margin: 0 0 1rem 0;
+  text-align: center;
+  color: #00ffff;
+  font-weight: 700;
+  font-size: 1rem;
+  font-family: 'Orbitron', monospace;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.cyber-title {
+  font-size: 1.8rem;
+  font-weight: 900;
+  text-align: center;
+  margin: 0 0 1rem 0;
+  background: linear-gradient(45deg, #00ffff, #ff00ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: 0 0 5px rgba(0, 255, 255, 0.3);
+}
+
+.stats {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.stat {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.7rem 1rem;
+  background: rgba(0, 255, 255, 0.05);
+  border: 1px solid rgba(0, 255, 255, 0.2);
+  border-radius: 4px;
+  min-width: 160px;
+}
+
+.stat-label {
+  font-size: 0.7rem;
+  color: #00cccc;
+  font-weight: 700;
+}
+
+.stat-value {
+  font-size: 1.1rem;
+  color: #ffffff;
+  font-weight: 700;
+  text-shadow: 0 0 3px rgba(255, 255, 255, 0.3);
+  min-width: 70px;
+  text-align: right;
+}
+
+.next-pieces-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.next-piece {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 60px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(0, 255, 255, 0.1);
+  border-radius: 4px;
+  padding: 0.5rem;
+}
+
+.next-piece-grid {
+  display: grid;
+  gap: 2px;
+  justify-content: center;
+  align-items: center;
+}
+
+/* 動的グリッドサイズ設定 */
+.next-piece-grid {
+  grid-template-columns: repeat(4, 16px);
+  grid-template-rows: repeat(4, 16px);
+}
+
+.next-cell {
+  width: 16px;
+  height: 16px;
+  border: 1px solid rgba(0, 255, 255, 0.12);
+  border-radius: 2px;
+  background: transparent;
+}
+
+.next-cell.filled {
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+.cell.ghost {
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: none;
+}
+
+.controls {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+/* ヘッダーボタン */
+.header-button {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: 1px solid #00ffff;
+  color: #ffffff;
+  padding: 0.4rem 0.8rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: 'Orbitron', monospace;
+  font-weight: 600;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 255, 255, 0.2);
+}
+
+.header-button:hover {
+  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+  box-shadow: 0 4px 12px rgba(0, 255, 255, 0.4);
+  transform: translateY(-2px);
+}
+
+.header-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(0, 255, 255, 0.3);
+}
+
+/* モーダルボタン */
+.modal-button {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: 1px solid #00ffff;
+  color: #ffffff;
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: 'Orbitron', monospace;
+  font-weight: 600;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 255, 255, 0.2);
+}
+
+.modal-button:hover {
+  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+  box-shadow: 0 4px 12px rgba(0, 255, 255, 0.4);
+  transform: translateY(-2px);
+}
+
+.modal-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(0, 255, 255, 0.3);
+}
+
+/* コントロールボタン */
+.control-button {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: 1px solid #00ffff;
+  color: #ffffff;
+  padding: 0.5rem 0.8rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: 'Orbitron', monospace;
+  font-weight: 600;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 255, 255, 0.2);
+}
+
+.control-button:hover {
+  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+  box-shadow: 0 4px 12px rgba(0, 255, 255, 0.4);
+  transform: translateY(-2px);
+}
+
+.control-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(0, 255, 255, 0.3);
+}
+
+.control-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.control-button:disabled:hover {
+  transform: none;
+  box-shadow: 0 2px 8px rgba(0, 255, 255, 0.2);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+/* 特別なボタンバリエーション */
+.resume-button {
+  background: linear-gradient(135deg, #00cc66 0%, #00aa55 100%);
+  border-color: #00ff88;
+}
+
+.resume-button:hover {
+  background: linear-gradient(135deg, #00aa55 0%, #00cc66 100%);
+  box-shadow: 0 4px 12px rgba(0, 255, 136, 0.4);
+}
+
+.restart-button {
+  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+  border-color: #ff8888;
+}
+
+.restart-button:hover {
+  background: linear-gradient(135deg, #ee5a52 0%, #ff6b6b 100%);
+  box-shadow: 0 4px 12px rgba(255, 136, 136, 0.4);
+}
+
+.game-board {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.board-container {
+  position: relative;
+}
+
+.board-grid {
+  display: grid;
+  grid-template-columns: repeat(10, 30px);
+  grid-template-rows: repeat(20, 30px);
+  gap: 3px;
+  background: rgba(0, 0, 0, 0.8);
+  border: 2px solid rgba(0, 255, 255, 0.4);
+  border-radius: 8px;
+  padding: 8px;
+}
+
+.cell {
+  width: 30px;
+  height: 30px;
+  border: 1px solid rgba(0, 255, 255, 0.1);
+  border-radius: 3px;
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.cell.filled {
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.cell.ghost {
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: none;
+}
+
+/* ゲームオーバーとモーダルスタイル */
+.game-over-overlay,
+.controls-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(5px);
+}
+
+.game-over-modal,
+.controls-modal {
+  background: linear-gradient(145deg, rgba(0, 20, 40, 0.9), rgba(0, 40, 80, 0.8));
+  border: 1px solid #00ffff;
+  border-radius: 10px;
+  padding: 2rem;
+  box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 300px;
+  max-width: 90vw;
+}
+
+.game-over-modal h2,
+.controls-modal h2 {
+  margin: 0 0 1rem 0;
+  color: #ff0066;
+  font-size: 2rem;
+  font-weight: 900;
+  text-shadow: 0 0 5px rgba(255, 0, 102, 0.3);
+  font-family: 'Orbitron', monospace;
+}
+
+.game-over-modal p {
+  margin: 0 0 1.5rem 0;
+  color: #cccccc;
+  font-size: 1.1rem;
+}
+
+.controls-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  margin-bottom: 1.5rem;
+  width: 100%;
+}
+
+.control-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background: rgba(0, 255, 255, 0.05);
+  border: 1px solid rgba(0, 255, 255, 0.2);
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.control-item:hover {
+  background: rgba(0, 255, 255, 0.1);
+  transform: translateX(5px);
+}
+
+.control-item span:first-child {
+  background: linear-gradient(145deg, rgba(0, 255, 255, 0.2), rgba(0, 200, 200, 0.3));
+  border: 1px solid #00ffff;
+  color: #00ffff;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  font-family: 'Orbitron', monospace;
+  font-weight: 700;
+  font-size: 0.9rem;
+  min-width: 80px;
+  text-align: center;
+}
+
+.control-item span:last-child {
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+/* テトリスエフェクト */
+.tetris-effect {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 3rem;
+  font-weight: 900;
+  color: #ff00ff;
+  text-shadow: 0 0 20px rgba(255, 0, 255, 0.8);
+  font-family: 'Orbitron', monospace;
+  animation: elegantTetrisFlash 0.8s ease-in-out;
+  pointer-events: none;
+  z-index: 10;
+}
+
+@keyframes elegantTetrisFlash {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.5);
+  }
+  50% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.2);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+/* ラインクリアエフェクト */
+.cell.line-clearing {
+  animation: elegantLineClearPulse 0.8s ease-in-out;
+  position: relative;
+  overflow: hidden;
+}
+
+.cell.line-clearing::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.8), transparent);
+  animation: elegantSweep 0.8s ease-in-out;
+}
+
+@keyframes elegantLineClearPulse {
+  0%, 100% {
+    background-color: inherit;
+    box-shadow: inherit;
+  }
+  25% {
+    background-color: rgba(255, 255, 255, 0.3);
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.6);
+  }
+  50% {
+    background-color: rgba(255, 255, 255, 0.5);
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
+  }
+  75% {
+    background-color: rgba(255, 255, 255, 0.3);
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.6);
+  }
+}
+
+@keyframes elegantSweep {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+/* レスポンシブデザイン */
+@media (max-width: 1024px) {
+  .game-container {
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem;
+    margin: 80px 1rem 1rem 1rem;
+    align-items: center;
+  }
+
+  .game-info-left,
+  .game-info-right {
+    min-width: auto;
+    width: 100%;
+    max-width: 400px;
+  }
+
+  .next-pieces-container {
+    flex-direction: row;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .next-piece {
+    min-height: 50px;
+    flex: 1;
+    min-width: 80px;
+  }
+
+  .game-header {
+    padding: 0.8rem 1rem;
+  }
+
+  .header-button {
+    padding: 0.5rem 1rem;
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .board-grid {
+    grid-template-columns: repeat(10, 25px);
+    grid-template-rows: repeat(20, 25px);
+  }
+
+  .cell {
+    width: 25px;
+    height: 25px;
+  }
+
+  .game-container {
+    padding: 0.5rem;
+    margin: 70px 0.5rem 0.5rem 0.5rem;
+  }
+
+  .controls-modal,
+  .game-over-modal {
+    margin: 1rem;
+    padding: 1.5rem;
+  }
+
+  .pause-modal {
+    margin: 1rem;
+    padding: 1.5rem;
+  }
+
+  .control-item span:first-child {
+    min-width: 60px;
+    font-size: 0.8rem;
+  }
+
+  .control-item span:last-child {
+    font-size: 0.9rem;
+  }
+
+  .modal-button {
+    padding: 0.6rem 1.2rem;
+    font-size: 0.8rem;
+  }
+
+  .game-header {
+    padding: 0.6rem 1rem;
+  }
+
+  .header-button {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.7rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .board-grid {
+    grid-template-columns: repeat(10, 22px);
+    grid-template-rows: repeat(20, 22px);
+  }
+
+  .cell {
+    width: 22px;
+    height: 22px;
+  }
+
+  .game-container {
+    padding: 0.5rem;
+    gap: 0.5rem;
+    margin: 60px 0.5rem 0.5rem 0.5rem;
+  }
+
+  .tetris-effect {
+    font-size: 2rem;
+  }
+
+  .game-header {
+    padding: 0.5rem 0.8rem;
+  }
+
+  .header-button {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.6rem;
+  }
+
+  .modal-button {
+    padding: 0.5rem 1rem;
+    font-size: 0.7rem;
+  }
+
+  .control-button {
+    padding: 0.4rem 0.6rem;
+    font-size: 0.6rem;
+  }
+}
+
+/* ヘッダー */
+.game-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  z-index: 100;
+}
+
+.header-left,
+.header-right {
+  display: flex;
+  align-items: center;
+}
+
+/* ポーズモーダル */
+.pause-modal {
+  background: linear-gradient(145deg, rgba(0, 20, 40, 0.9), rgba(0, 40, 80, 0.8));
+  border: 1px solid #00ffff;
+  border-radius: 10px;
+  padding: 2rem;
+  box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 300px;
+  max-width: 90vw;
+}
+
+.pause-modal h2 {
+  margin: 0 0 2rem 0;
+  color: #00ffff;
+  font-size: 2rem;
+  font-weight: 900;
+  text-shadow: 0 0 5px rgba(0, 255, 255, 0.3);
+  font-family: 'Orbitron', monospace;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.pause-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+}
