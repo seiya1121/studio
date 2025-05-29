@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import './App.css'
 import Tetris from './pages/tetris'
+import SpaceAdventure from './pages/space-adventure'
+import BattleArena from './pages/battle-arena'
 
 function App() {
   const [currentPage, setCurrentPage] = useState('home')
@@ -9,6 +11,10 @@ function App() {
     switch (currentPage) {
       case 'tetris':
         return <Tetris onBackToHome={() => setCurrentPage('home')} />
+      case 'space-adventure':
+        return <SpaceAdventure onBackToHome={() => setCurrentPage('home')} />
+      case 'battle-arena':
+        return <BattleArena onBackToHome={() => setCurrentPage('home')} />
       default:
         return (
           <div className="home-content">
@@ -44,26 +50,26 @@ function App() {
                     <button className="play-button">Play Now</button>
                   </div>
                   
-                  <div className="game-card coming-soon">
+                  <div className="game-card space-adventure-card" onClick={() => setCurrentPage('space-adventure')}>
                     <div className="game-icon">🚀</div>
                     <h3 className="game-title">Space Adventure</h3>
-                    <p className="game-description">Epic space exploration game</p>
+                    <p className="game-description">Epic space shooting game with cyberpunk style</p>
                     <div className="game-tags">
-                      <span className="tag">Adventure</span>
+                      <span className="tag">Shooting</span>
                       <span className="tag">Sci-Fi</span>
                     </div>
-                    <button className="play-button disabled">Coming Soon</button>
+                    <button className="play-button">Play Now</button>
                   </div>
                   
-                  <div className="game-card coming-soon">
+                  <div className="game-card battle-arena-card" onClick={() => setCurrentPage('battle-arena')}>
                     <div className="game-icon">⚔️</div>
                     <h3 className="game-title">Battle Arena</h3>
-                    <p className="game-description">Multiplayer battle royale</p>
+                    <p className="game-description">ターンベース戦略バトルゲーム</p>
                     <div className="game-tags">
-                      <span className="tag">Action</span>
-                      <span className="tag">Multiplayer</span>
+                      <span className="tag">Strategy</span>
+                      <span className="tag">Turn-based</span>
                     </div>
-                    <button className="play-button disabled">Coming Soon</button>
+                    <button className="play-button">Play Now</button>
                   </div>
                 </div>
               </div>
