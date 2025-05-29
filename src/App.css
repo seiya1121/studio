@@ -6,33 +6,43 @@
   box-sizing: border-box;
 }
 
-html, body {
+html {
+  height: auto;
+  overflow-x: hidden;
+  overflow-y: scroll !important;
+}
+
+body {
   margin: 0;
   padding: 0;
-  height: 100%;
+  height: auto;
+  min-height: 100vh;
   overflow-x: hidden;
+  overflow-y: auto !important;
   font-family: 'Orbitron', monospace;
 }
 
 #root {
   width: 100%;
+  height: auto;
   min-height: 100vh;
 }
 
 .app-container {
   width: 100%;
   min-height: 100vh;
+  height: auto;
   background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-  position: relative;
   overflow-x: hidden;
+  overflow-y: auto;
 }
 
 .home-content {
   position: relative;
   z-index: 1;
-  min-height: 100vh;
   display: flex;
   flex-direction: column;
+  flex-shrink: 0;
 }
 
 /* Header Styles */
@@ -93,8 +103,9 @@ html, body {
 
 /* Main Content */
 .main-content {
-  flex: 1;
+  flex: 1 1 auto;
   padding: 2rem;
+  min-height: 0;
 }
 
 .hero-section {
@@ -143,7 +154,7 @@ html, body {
 .games-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 2rem;
+  gap: 1.5rem;
   padding: 1rem;
 }
 
@@ -151,7 +162,7 @@ html, body {
   background: rgba(0, 0, 0, 0.8);
   border: 3px solid #00ffff;
   border-radius: 8px;
-  padding: 2rem;
+  padding: 1.5rem;
   text-align: center;
   transition: all 0.3s ease;
   cursor: pointer;
@@ -174,16 +185,16 @@ html, body {
 }
 
 .game-icon {
-  font-size: 4rem;
-  margin-bottom: 1rem;
+  font-size: 3rem;
+  margin-bottom: 0.8rem;
   display: block;
 }
 
 .game-title {
   font-family: 'Press Start 2P', cursive;
-  font-size: 1.2rem;
+  font-size: 1rem;
   color: #00ffff;
-  margin-bottom: 1rem;
+  margin-bottom: 0.8rem;
   line-height: 1.4;
 }
 
@@ -192,7 +203,7 @@ html, body {
   font-family: 'Orbitron', monospace;
   font-size: 0.9rem;
   line-height: 1.5;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
   opacity: 0.9;
 }
 
@@ -200,7 +211,7 @@ html, body {
   display: flex;
   justify-content: center;
   gap: 0.5rem;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
   flex-wrap: wrap;
 }
 
@@ -218,7 +229,7 @@ html, body {
   background: #00ff00;
   color: #000000;
   border: 2px solid #ffffff;
-  padding: 1rem 2rem;
+  padding: 0.8rem 1.6rem;
   border-radius: 4px;
   font-family: 'Press Start 2P', cursive;
   font-size: 0.8rem;
@@ -277,7 +288,7 @@ html, body {
 }
 
 .space-adventure-card .game-icon {
-  font-size: 3rem;
+  font-size: 2.5rem;
   filter: drop-shadow(0 0 10px rgba(0, 255, 255, 0.4));
 }
 
@@ -322,7 +333,7 @@ html, body {
 }
 
 .battle-arena-card .game-icon {
-  font-size: 3rem;
+  font-size: 2.5rem;
   filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.4));
   animation: sword-glow 2s ease-in-out infinite alternate;
 }
@@ -354,9 +365,99 @@ html, body {
 }
 
 .battle-arena-card .play-button:hover {
-  background: linear-gradient(135deg, #ff4757 0%, #ff6b6b 100%);
-  box-shadow: 0 4px 12px rgba(255, 215, 0, 0.4);
-  border-color: rgba(255, 215, 0, 0.8);
+  background: linear-gradient(135deg, #cc5500, #ff6600);
+  box-shadow: 
+    0 0 20px #ff6600,
+    0 0 40px #ff6600,
+    0 0 60px #ff6600;
+}
+
+/* Quiz Card Styles */
+.quiz-card {
+  border: 3px solid #9d4edd;
+  background: linear-gradient(135deg, rgba(157, 78, 221, 0.1), rgba(168, 85, 247, 0.1));
+  position: relative;
+  overflow: hidden;
+}
+
+.quiz-card::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(
+    circle,
+    rgba(157, 78, 221, 0.1) 0%,
+    transparent 50%
+  );
+  animation: quiz-pulse 3s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.quiz-card:hover {
+  border-color: #a855f7;
+  box-shadow: 
+    0 0 30px rgba(168, 85, 247, 0.6),
+    0 0 60px rgba(168, 85, 247, 0.3);
+}
+
+.quiz-card .game-icon {
+  filter: drop-shadow(0 0 10px #a855f7);
+  animation: quiz-brain-pulse 2s ease-in-out infinite;
+}
+
+@keyframes quiz-pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.3;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.1;
+  }
+}
+
+@keyframes quiz-brain-pulse {
+  0%, 100% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 10px #a855f7);
+  }
+  50% {
+    transform: scale(1.05);
+    filter: drop-shadow(0 0 20px #a855f7);
+  }
+}
+
+.quiz-card .game-title {
+  color: #a855f7;
+  text-shadow: 
+    0 0 10px #9d4edd,
+    0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.quiz-card .tag {
+  background: linear-gradient(135deg, #9d4edd, #a855f7);
+  border: 1px solid #a855f7;
+  color: white;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.quiz-card .play-button {
+  background: linear-gradient(135deg, #9d4edd, #a855f7);
+  border: 2px solid #a855f7;
+  box-shadow: 
+    0 0 10px rgba(168, 85, 247, 0.4),
+    inset 0 1px 3px rgba(255, 255, 255, 0.2);
+}
+
+.quiz-card .play-button:hover {
+  background: linear-gradient(135deg, #7c3aed, #9d4edd);
+  box-shadow: 
+    0 0 20px #a855f7,
+    0 0 40px #a855f7,
+    0 0 60px #a855f7;
 }
 
 /* Footer */

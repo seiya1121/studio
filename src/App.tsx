@@ -3,6 +3,7 @@ import './App.css'
 import Tetris from './pages/tetris'
 import SpaceAdventure from './pages/space-adventure'
 import BattleArena from './pages/battle-arena'
+import Quiz from './pages/quiz'
 
 function App() {
   const [currentPage, setCurrentPage] = useState('home')
@@ -15,6 +16,8 @@ function App() {
         return <SpaceAdventure onBackToHome={() => setCurrentPage('home')} />
       case 'battle-arena':
         return <BattleArena onBackToHome={() => setCurrentPage('home')} />
+      case 'quiz':
+        return <Quiz onBackToHome={() => setCurrentPage('home')} />
       default:
         return (
           <div className="home-content">
@@ -70,6 +73,39 @@ function App() {
                       <span className="tag">Turn-based</span>
                     </div>
                     <button className="play-button">Play Now</button>
+                  </div>
+                  
+                  <div className="game-card quiz-card" onClick={() => setCurrentPage('quiz')}>
+                    <div className="game-icon">🧠</div>
+                    <h3 className="game-title">Quiz Game</h3>
+                    <p className="game-description">多ジャンル対応の4択クイズゲーム</p>
+                    <div className="game-tags">
+                      <span className="tag">Quiz</span>
+                      <span className="tag">Knowledge</span>
+                    </div>
+                    <button className="play-button">Play Now</button>
+                  </div>
+                  
+                  <div className="game-card coming-soon">
+                    <div className="game-icon">🎯</div>
+                    <h3 className="game-title">Target Practice</h3>
+                    <p className="game-description">シューティングゲーム（開発中）</p>
+                    <div className="game-tags">
+                      <span className="tag">Shooting</span>
+                      <span className="tag">Coming Soon</span>
+                    </div>
+                    <button className="play-button disabled">Coming Soon</button>
+                  </div>
+                  
+                  <div className="game-card coming-soon">
+                    <div className="game-icon">🎲</div>
+                    <h3 className="game-title">Dice Masters</h3>
+                    <p className="game-description">ダイスバトルゲーム（開発中）</p>
+                    <div className="game-tags">
+                      <span className="tag">Strategy</span>
+                      <span className="tag">Coming Soon</span>
+                    </div>
+                    <button className="play-button disabled">Coming Soon</button>
                   </div>
                 </div>
               </div>
